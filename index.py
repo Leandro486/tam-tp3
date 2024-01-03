@@ -295,7 +295,7 @@ def db_connection():
       host='aid.estgoh.ipc.pt',
       port='5432'
     )
-  return db
+    return db
 
 
 if __name__ == "__main__":
