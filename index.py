@@ -31,13 +31,23 @@ NOT_FOUND = 404
 SERVER_ERROR = 500
   
 @app.route('/', methods = ["GET"])
-def home():  
-    try:
-      db = db_connection()
+def home():        
+    return "API bem"
 
-    except Exception as e:
-      return f"Erro ao conectar ao banco de dados: {e}"
-      
+##########################################################
+## DATABASE ACCESS
+##########################################################
+def db_connection():
+    ##The credentials and access to database are stored in a environment variable
+    DATABASE_URL = os.environ.get('DATABASE_URL')
+    db = psycopg2.connect(DATABASE_URL)
+    #db = psycopg2.connect(
+    #  dbname='db2020144972',
+    #  user='a2020144972',
+    #  password='a2020144972',
+    #  host='aid.estgoh.ipc.pt',
+    #  port='5432'
+    #)
     return db
 
 
@@ -279,23 +289,6 @@ def enviar_report():
     except (Exception, psycopg2.DatabaseError) as error:
         return jsonify({"Code": NOT_FOUND_CODE, "Erro": "Report não registado"})
     return {"Code": OK_CODE}
-
-
-
-##########################################################
-## DATABASE ACCESS
-##########################################################
-def db_connection():
-    ##The credentials and access to database are stored in a environment variable
-    #DATABASE_URL = os.environ.get('DATABASE_URL')
-    db = psycopg2.connect(
-      dbname='db2020144972',
-      user='a2020144972',
-      password='a2020144972',
-      host='aid.estgoh.ipc.pt',
-      port='5432'
-    )
-    return db
 
 
 if __name__ == "__main__":
