@@ -31,9 +31,14 @@ NOT_FOUND = 404
 SERVER_ERROR = 500
   
 @app.route('/', methods = ["GET"])
-def home():
-    db = db_connection()
-    return "es bue mau"
+def home():  
+    try:
+      db = db_connection()
+
+    except Exception as e:
+      return f"Erro ao conectar ao banco de dados: {e}"
+      
+    return db
 
 
 ##########################################################
