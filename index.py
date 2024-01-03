@@ -33,7 +33,7 @@ SERVER_ERROR = 500
 @app.route('/', methods = ["GET"])
 def home():
     db = db_connection()
-    return db
+    return "es bue mau"
 
 
 ##########################################################
