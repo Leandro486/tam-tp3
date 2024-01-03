@@ -60,11 +60,11 @@ def auth_user(func):
     @wraps(func)
     def decorated(*args, **kwargs):
         content = request.get_json()
-        if content is None or "token" not in content or not content["token"]:
+        if content is None or "uti_token" not in content or not content["uti_token"]:
             return jsonify({'Erro': 'Token está em falta!', 'Code': UNAUTHORIZED_CODE})
 
         try:
-            token = content["token"]
+            token = content["uti_token"]
             data = jwt.decode(token, app.config['SECRET_KEY'])    
 
             decoded_token = jwt.decode(content['token'], app.config['SECRET_KEY'])
