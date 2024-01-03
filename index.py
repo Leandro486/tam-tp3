@@ -282,8 +282,8 @@ def enviar_report():
 ##########################################################
 def db_connection():
     ##The credentials and access to database are stored in a environment variable
-    DATABASE_URL = os.environ.get('DATABASE_URL')
-    db = psycopg2.connect(DATABASE_URL)
+    #DATABASE_URL = os.environ.get('DATABASE_URL')
+    db = psycopg2.connect('postgres://a2020144972:a2020144972@aid.estgoh.ipc.pt:5432/db2020144972')
     return db
 
 
