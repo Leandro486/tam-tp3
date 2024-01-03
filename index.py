@@ -39,17 +39,17 @@ def home():
 ##########################################################
 def db_connection():
     ##The credentials and access to database are stored in a environment variable
-    #DATABASE_URL = os.environ.get('DATABASE_URL')
-    #db = psycopg2.connect(DATABASE_URL)
+    DATABASE_URL = os.environ.get('DATABASE_URL')
+    db = psycopg2.connect(DATABASE_URL)
     
     #teste, não é para fazer assim
-    db = psycopg2.connect(
-      dbname='db2020144972',
-      user='a2020144972',
-      password='a2020144972',
-      host='aid.estgoh.ipc.pt',
-      port='5432'
-    )
+    #db = psycopg2.connect(
+    #  dbname='db2020144972',
+    #  user='a2020144972',
+    #  password='a2020144972',
+    #  host='aid.estgoh.ipc.pt',
+    #  port='5432'
+    #)
     return db
 
 
@@ -86,27 +86,30 @@ def auth_user(func):
 def login():
     content = request.get_json()
 
-    if "n_identificacao" not in content or "senha" not in content:
+    if "uti_login" not in content or "uti_password" not in content:
         return jsonify({"Code": BAD_REQUEST_CODE, "Erro": "Parâmetros inválidos"})
 
     get_user_info = """
                 SELECT *
-                FROM utilizadores
-                WHERE n_identificacao = %s AND senha = crypt(%s, senha);
+                FROM Utilizadores
+                WHERE uti_login = %s AND uti_password = crypt(%s, senha);
                 """
 
-    values = [content["n_identificacao"], content["senha"]]
+    values = [content["uti_login"], content["uti_password"]]
 
     try:
         with db_connection() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(get_user_info, values)
                 rows = cursor.fetchall()
+
+                #duvida!
                 token = jwt.encode({
                     'id': rows[0][0],
                     'administrador': rows[0][7],
                     'expiration': str(datetime.utcnow() + timedelta(hours=1))
                 }, app.config['SECRET_KEY'])
+
         conn.close()
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
@@ -121,15 +124,15 @@ def login():
 def registar_utilizador():
     content = request.get_json()
 
-    if "n_identificacao" not in content or "nome" not in content or "senha" not in content or "email" not in content or "cargo" not in content: 
+    if "uti_login" not in content or "uti_password" not in content or "uti_username" not in content or "uti_id": 
         return jsonify({"Code": BAD_REQUEST_CODE, "Erro": "Parâmetros inválidos"})
 
     get_user_info = """
-                INSERT INTO utilizadores(n_identificacao, nome, senha, email, cargo, administrador) 
-                VALUES(%s, %s, crypt(%s, gen_salt('bf')), %s, %s, FALSE);
+                INSERT INTO Utilizadores(uti_id, uti_login, uti_password, uti_token, uti_username) 
+                VALUES(%s, %s, crypt(%s, gen_salt('bf')), %s, %s);
                 """
 
-    values = [content["n_identificacao"], content["nome"], content["senha"], content["email"], content["cargo"]]
+    values = [content["uti_id"], content["uti_login"], content["uti_password"], "", content["uti_username"]]
 
     try:
         with db_connection() as conn:
@@ -145,21 +148,18 @@ def registar_utilizador():
 ##########################################################
 ## CONSULTAR SALDO
 ##########################################################
-@app.route("/consultar_saldo", methods=['POST'])
-@auth_user
-def consultar_saldo():
+#@app.route("/consultar_saldo", methods=['POST'])
+#@auth_user
+#def consultar_saldo():
     ##tokens should be sent on authorization header !!!
-    content = request.get_json()
-
-    conn = db_connection()
-    cur = conn.cursor()
-
-    decoded_token = jwt.decode(content['token'], app.config['SECRET_KEY'])
-
-    cur.execute("SELECT CAST(CAST(saldo AS NUMERIC(8,2)) AS VARCHAR) FROM utilizadores WHERE id = %s;", (decoded_token["id"],))
-    rows = cur.fetchall()
-    conn.close()
-    return {"Saldo": rows[0][0]}
+#    content = request.get_json()
+#    conn = db_connection()
+#    cur = conn.cursor()
+#    decoded_token = jwt.decode(content['token'], app.config['SECRET_KEY'])
+#    cur.execute("SELECT CAST(CAST(saldo AS NUMERIC(8,2)) AS VARCHAR) FROM utilizadores WHERE id = %s;", (decoded_token["id"],))
+#    rows = cur.fetchall()
+#    conn.close()
+#    return {"Saldo": rows[0][0]}
 
 
 
@@ -174,125 +174,106 @@ def consultar_utilizador():
     conn = db_connection()
     cur = conn.cursor()
 
-    decoded_token = jwt.decode(content['token'], app.config['SECRET_KEY'])
+    decoded_token = jwt.decode(content['uti_token'], app.config['SECRET_KEY'])
 
-    cur.execute("SELECT * FROM utilizadores WHERE id = %s;", (decoded_token["id"],))
+    cur.execute("SELECT * FROM Utilizadores WHERE uti_id = %s;", (decoded_token["uti_id"],))
     rows = cur.fetchall()
 
     conn.close()
-    return jsonify({"Id": rows[0][1], "nome": rows[0][2], "e-mail": rows[0][4], "cargo": rows[0][6]})
+    return jsonify({"uti_id": rows[0][0], "uti_login": rows[0][1], "uti_password": rows[0][2], "uti_token": rows[0][3], "uti_usernaneme": rows[0][4]})
 
 
 ##########################################################
 ## LISTAR SE E ADMIN
 ##########################################################
-@app.route("/isAdmin", methods=['POST'])
-@auth_user
-def isAdmin():
-
-    conn = db_connection()
-    cur = conn.cursor()
-    content = request.get_json()
-
-    decoded_token = jwt.decode(content['token'], app.config['SECRET_KEY'])
-
-    cur.execute("SELECT administrador FROM utilizadores WHERE id = %s;", (decoded_token["id"],))
-    rows = cur.fetchall()
-    conn.close()
-    return {"admin": rows[0][0]}
+#@app.route("/isAdmin", methods=['POST'])
+#@auth_user
+#def isAdmin():
+#    conn = db_connection()
+#    cur = conn.cursor()
+#    content = request.get_json()
+#    decoded_token = jwt.decode(content['token'], app.config['SECRET_KEY'])
+#    cur.execute("SELECT administrador FROM utilizadores WHERE id = %s;", (decoded_token["id"],))
+#    rows = cur.fetchall()
+#    conn.close()
+#    return {"admin": rows[0][0]}
 
 
 ##########################################################
 ## ACTUALIZAR UTILIZADOR
 ##########################################################
-@app.route("/actualizar_utilizador", methods=['POST'])
-@auth_user
-def actualizar_utilizador():
-    content = request.get_json()
-
-    if "nome" not in content or "email" not in content: 
-        return jsonify({"Code": BAD_REQUEST_CODE, "Erro": "Parâmetros inválidos"})
-
-    get_user_info = """
-                UPDATE utilizadores SET nome = %s, email = %s WHERE id = %s;
-                """
-    decoded_token = jwt.decode(content['token'], app.config['SECRET_KEY'])
-    values = [content["nome"], content["email"], decoded_token["id"]]
-
-    try:
-        with db_connection() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(get_user_info, values)
-        conn.close()
-    except (Exception, psycopg2.DatabaseError) as error:
-        return jsonify({"Code": NOT_FOUND_CODE, "Erro": "Utilizador não actualizado!"})
-    return {"Code": OK_CODE}
+#@app.route("/actualizar_utilizador", methods=['POST'])
+#@auth_user
+#def actualizar_utilizador():
+#    content = request.get_json()
+#    if "uti_login" not in content or "uti_password" not in content: 
+#        return jsonify({"Code": BAD_REQUEST_CODE, "Erro": "Parâmetros inválidos"})
+#    get_user_info = """
+#                UPDATE Utilizadores SET uti_login = %s, uti_username = %s, uti_password = %s WHERE id = %s;
+#                """
+#    decoded_token = jwt.decode(content['token'], app.config['SECRET_KEY'])
+#    values = [content["nome"], content["email"], decoded_token["id"]]
+#    try:
+#        with db_connection() as conn:
+#            with conn.cursor() as cursor:
+#                cursor.execute(get_user_info, values)
+#        conn.close()
+#    except (Exception, psycopg2.DatabaseError) as error:
+#        return jsonify({"Code": NOT_FOUND_CODE, "Erro": "Utilizador não actualizado!"})
+#    return {"Code": OK_CODE}
 
 
 ##########################################################
 ## CARREGAR SALDO
 ##########################################################
-@app.route("/carregar_saldo", methods=['POST'])
-@auth_user
-def carregar_saldo():
-    content = request.get_json()
-
-    if "n_identificacao" not in content or "saldo" not in content:
-        return jsonify({"Code": BAD_REQUEST_CODE, "Erro": "Parâmetros inválidos"})
-
-    get_user_info = """
-                UPDATE utilizadores SET saldo = saldo + %s WHERE n_identificacao = %s;
-                """
-
-    values = [content["saldo"], content["n_identificacao"]]
-
-    decoded_token = jwt.decode(content['token'], app.config['SECRET_KEY'])
-    if(not decoded_token['administrador']):
-        return jsonify({"Erro": "O utilizador não tem esses privilégios", "Code": FORBIDDEN_CODE})
-
-    try:
-        with db_connection() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(get_user_info, values)
-        conn.close()
-    except (Exception, psycopg2.DatabaseError) as error:
-        return jsonify({"Code": NOT_FOUND_CODE, "Erro": "Saldo não carregado"})
-    return {"Code": OK_CODE}
+#@app.route("/carregar_saldo", methods=['POST'])
+#@auth_user
+#def carregar_saldo():
+#    content = request.get_json()
+#    if "n_identificacao" not in content or "saldo" not in content:
+#        return jsonify({"Code": BAD_REQUEST_CODE, "Erro": "Parâmetros inválidos"})
+#    get_user_info = """
+#                UPDATE utilizadores SET saldo = saldo + %s WHERE n_identificacao = %s;
+#                """
+#    values = [content["saldo"], content["n_identificacao"]]
+#    decoded_token = jwt.decode(content['token'], app.config['SECRET_KEY'])
+#    if(not decoded_token['administrador']):
+#        return jsonify({"Erro": "O utilizador não tem esses privilégios", "Code": FORBIDDEN_CODE})
+#    try:
+#        with db_connection() as conn:
+#            with conn.cursor() as cursor:
+#                cursor.execute(get_user_info, values)
+#        conn.close()
+#    except (Exception, psycopg2.DatabaseError) as error:
+#        return jsonify({"Code": NOT_FOUND_CODE, "Erro": "Saldo não carregado"})
+#    return {"Code": OK_CODE}
 
 ##########################################################
 ## ENVIAR REPORTS
 ##########################################################
-@app.route("/enviar_report", methods=['POST'])
-@auth_user
-def enviar_report():
-    content = request.get_json()
-
-    if "assunto" not in content or "mensagem" not in content or "info" not in content or "anonimo" not in content:
-        return jsonify({"Code": BAD_REQUEST_CODE, "Erro": "Parâmetros inválidos"})
-
-    insert_report = """
-                INSERT INTO report(assunto, mensagem, utilizador_id, info_dispositivo, data_envio) VALUES(%s, %s, %s, %s, now());
-                """
-
-    decoded_token = jwt.decode(content['token'], app.config['SECRET_KEY'])
-    
-    if content["anonimo"] == "True":
-        user = None
-    else:
-        user = decoded_token["id"]
-
-    values = [content["assunto"], content["mensagem"], user, content["info"]]
-
-    try:
-        with db_connection() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(insert_report, values)
-        conn.close()
-    except (Exception, psycopg2.DatabaseError) as error:
-        return jsonify({"Code": NOT_FOUND_CODE, "Erro": "Report não registado"})
-    return {"Code": OK_CODE}
-
+#@app.route("/enviar_report", methods=['POST'])
+#@auth_user
+#def enviar_report():
+#    content = request.get_json()
+#    if "assunto" not in content or "mensagem" not in content or "info" not in content or "anonimo" not in content:
+#        return jsonify({"Code": BAD_REQUEST_CODE, "Erro": "Parâmetros inválidos"})
+#    insert_report = """
+#                INSERT INTO report(assunto, mensagem, utilizador_id, info_dispositivo, data_envio) VALUES(%s, %s, %s, %s, now());
+#                """
+#    decoded_token = jwt.decode(content['token'], app.config['SECRET_KEY'])    
+#    if content["anonimo"] == "True":
+#        user = None
+#    else:
+#        user = decoded_token["id"]
+#    values = [content["assunto"], content["mensagem"], user, content["info"]]
+#    try:
+#        with db_connection() as conn:
+#            with conn.cursor() as cursor:
+#                cursor.execute(insert_report, values)
+#        conn.close()
+#    except (Exception, psycopg2.DatabaseError) as error:
+#        return jsonify({"Code": NOT_FOUND_CODE, "Erro": "Report não registado"})
+#    return {"Code": OK_CODE}
 
 if __name__ == "__main__":
-
     app.run(port=8080, debug=True, threaded=True)
