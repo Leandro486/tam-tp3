@@ -32,7 +32,8 @@ SERVER_ERROR = 500
   
 @app.route('/', methods = ["GET"])
 def home():
-    return "Bem vindo à API!"
+    db = db_connection()
+    return db
 
 
 ##########################################################
