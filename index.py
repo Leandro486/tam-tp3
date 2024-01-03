@@ -32,7 +32,7 @@ SERVER_ERROR = 500
   
 @app.route('/', methods = ["GET"])
 def home():        
-    return "API bem"
+    return db_connection()
 
 ##########################################################
 ## DATABASE ACCESS
