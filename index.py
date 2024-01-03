@@ -40,14 +40,16 @@ def home():
 def db_connection():
     ##The credentials and access to database are stored in a environment variable
     DATABASE_URL = os.environ.get('DATABASE_URL')
-    db = psycopg2.connect(DATABASE_URL)
-    #db = psycopg2.connect(
-    #  dbname='db2020144972',
-    #  user='a2020144972',
-    #  password='a2020144972',
-    #  host='aid.estgoh.ipc.pt',
-    #  port='5432'
-    #)
+    #db = psycopg2.connect(DATABASE_URL)
+    
+    #teste, não é para fazer assim
+    db = psycopg2.connect(
+      dbname='db2020144972',
+      user='a2020144972',
+      password='a2020144972',
+      host='aid.estgoh.ipc.pt',
+      port='5432'
+    )
     return db
 
 
