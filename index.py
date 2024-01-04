@@ -39,8 +39,12 @@ def home():
 ##########################################################
 def db_connection():
     ##The credentials and access to database are stored in a environment variable
-    DATABASE_URL = os.environ.get('DATABASE_URL')
-    db = psycopg2.connect(DATABASE_URL)
+    database = os.environ.get('database')
+    user = os.environ.get('user')
+    password = os.environ.get('pass')
+    host = os.environ.get('hostname')
+
+    db = psycopg2.connect(dbname = database, user = user, password = password, host = host)
     
     #teste, não é para fazer assim
     #db = psycopg2.connect(
