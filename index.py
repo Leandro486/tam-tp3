@@ -32,22 +32,7 @@ SERVER_ERROR = 500
   
 @app.route('/', methods = ["GET"])
 def home():        
-    get_user_info = """
-                INSERT INTO med(dsadsa) 
-                VALUES(%s);
-                """
-    values = ["1"]
-
-    try:
-        with db_connection() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(get_user_info, values)
-    except (Exception, psycopg2.DatabaseError) as error:
-        return jsonify({"Code": NOT_FOUND_CODE, "Erro": str(error)})
-    finally:
-        conn.close()
-    return {"Code": OK_CODE} 
-    #return db_connection()
+    return "Bem vindo a API"
 
 ##########################################################
 ## DATABASE ACCESS
@@ -58,17 +43,8 @@ def db_connection():
     user = os.environ.get('user')
     password = os.environ.get('pass')
     host = os.environ.get('hostname')
-    print(database, user, password, host)
+    #print(database, user, password, host)
     db = psycopg2.connect(dbname = database, user = user, password = password, host = host, port = 5432)
-    #print(db)
-    #teste, não é para fazer assim
-    #db = psycopg2.connect(
-    #  dbname='db2020144972',
-    #  user='a2020144972',
-    #  password='a2020144972',
-    #  host='aid.estgoh.ipc.pt',
-    #  port='5432'
-    #)
     return db
 
 
@@ -143,15 +119,15 @@ def verifyUti():
 def addUti():
     content = request.get_json()
 
-    if "uti_login" not in content or "uti_password" not in content or "uti_username" not in content or "uti_id": 
+    if "uti_login" not in content or "uti_password" not in content:
         return jsonify({"Code": BAD_REQUEST_CODE, "Erro": "Parâmetros inválidos"})
 
     get_user_info = """
-                INSERT INTO Utilizadores(uti_id, uti_login, uti_password, uti_token, uti_username) 
-                VALUES(%s, %s, crypt(%s, gen_salt('bf')), %s, %s);
+                INSERT INTO Utilizadores(uti_id, uti_login, uti_password, uti_token) 
+                VALUES(%s, %s, crypt(%s, gen_salt('bf')), %s);
                 """
 
-    values = [content["uti_id"], content["uti_login"], content["uti_password"], "", content["uti_username"]]
+    values = [content["uti_id"], content["uti_login"], content["uti_password"], ""]
 
     try:
         with db_connection() as conn:
