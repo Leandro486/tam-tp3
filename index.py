@@ -45,7 +45,7 @@ def db_connection():
     host = os.environ.get('hostname')
     print(database, user, password, host)
     db = psycopg2.connect(dbname = database, user = user, password = password, host = host, port = 5432)
-    print(db)
+    #print(db)
     #teste, não é para fazer assim
     #db = psycopg2.connect(
     #  dbname='db2020144972',
