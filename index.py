@@ -32,7 +32,22 @@ SERVER_ERROR = 500
   
 @app.route('/', methods = ["GET"])
 def home():        
-    return db_connection()
+    get_user_info = """
+                INSERT INTO med(dsadsa) 
+                VALUES(%s);
+                """
+    values = ["1"]
+
+    try:
+        with db_connection() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(get_user_info, values)
+    except (Exception, psycopg2.DatabaseError) as error:
+        return jsonify({"Code": NOT_FOUND_CODE, "Erro": str(error)})
+    finally:
+        conn.close()
+    return {"Code": OK_CODE} 
+    #return db_connection()
 
 ##########################################################
 ## DATABASE ACCESS
