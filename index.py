@@ -160,6 +160,8 @@ def logoutUti():
     
     values = [False,"",content["uti_id"]]
 
+    print(content["uti_id"])
+
     try:
         with db_connection() as conn:
             with conn.cursor() as cursor:
