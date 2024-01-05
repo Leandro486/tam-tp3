@@ -143,6 +143,46 @@ def verifyUti():
 
 
 ##########################################################
+## LOGOUT
+##########################################################
+@app.route("/logoutUti",methods=['POST'])
+def logoutUti():
+    content = request.get_json()
+
+    if "uti_id" not in content:
+        return jsonify({"Code:":BAD_REQUEST_CODE, "Erro":"Parãmetros inválidos"})
+    
+    get_user_info = """
+                    UPDATE Utilizadores
+                    SET uti_online = %s, uti_token = %s, uti_token_expiration = %s
+                    WHERE uti_id = %s;
+                    """
+    
+    values = [False,"",None,content["uti_id"]]
+
+    try:
+        with db_connection() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(get_user_info, values)
+                rows = cursor.fetchall()
+        conn.close()
+        return True
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+        return jsonify({"Code": NOT_FOUND_CODE, "Erro": "Não foi possivel fazer o logout"})
+            
+    
+
+
+
+
+
+
+
+
+
+
+##########################################################
 ## REGISTO DE UTILIZADOR
 ##########################################################
 @app.route("/addUti", methods=['POST'])
@@ -184,13 +224,12 @@ def getUti():
     conn = db_connection()
     cur = conn.cursor()
 
-    #decoded_token = jwt.decode(content['uti_token'], app.config['SECRET_KEY'])
-
     cur.execute("SELECT * FROM Utilizadores WHERE uti_id = %s;", (content["uti_id"]))
     rows = cur.fetchall()
 
     conn.close()
     return jsonify({"uti_id": rows[0][0], "uti_login": rows[0][1], "uti_password": rows[0][2], "uti_token": rows[0][3], "uti_online": rows[0][4], "uti_token_expiration":rows[0][5]})
+
 
 if __name__ == "__main__":
     app.run(port=8080, debug=True, threaded=True)
