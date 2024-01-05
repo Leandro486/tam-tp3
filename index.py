@@ -113,7 +113,7 @@ def verifyUti():
                 if rows:
                     update_token = """
                     UPDATE Utilizadores
-                    SET uti_token = %s, uti_token_expiration = %s
+                    SET uti_token = %s, uti_token_expiration = %s, uti_online = %s
                     WHERE uti_id = %s;
                     """
 
@@ -121,7 +121,7 @@ def verifyUti():
                     token = generate_token(user_id)
                     print(token)
                     expiration_time = datetime.utcnow() + timedelta(hours=1)
-                    values_token = [token, expiration_time, user_id]
+                    values_token = [token, expiration_time, user_id,True]
 
                     try:
                         conn1 = db_connection()
