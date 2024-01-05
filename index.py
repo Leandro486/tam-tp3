@@ -102,31 +102,32 @@ def verifyUti():
                 cursor.execute(get_user_info, values)
                 rows = cursor.fetchall()
 
-                update_token = """
-                UPDATE Utilizadores
-                SET uti_token = %s, uti_token_expiration = %s
-                WHERE uti_id = %s;
-                """
+                #update_token = """
+                #UPDATE Utilizadores
+                #SET uti_token = %s, uti_token_expiration = %s
+                #WHERE uti_id = %s;
+                #"""
 
-                if rows:
-                    user_id = rows[0][0]
-                    token = generate_token(user_id)
-                    expiration_time = datetime.utcnow() + timedelta(hours=1)
-                    values_token = [token, expiration_time, user_id]
+                #if rows:
+                #    user_id = rows[0][0]
+                #    token = generate_token(user_id)
+                #    expiration_time = datetime.utcnow() + timedelta(hours=1)
+                #    values_token = [token, expiration_time, user_id]
 
-                    try:
-                        with conn.cursor() as cursor:
-                            cursor.execute(update_token, values_token)
-                        conn.commit()
-                        return jsonify({"uti_id": rows[0][0], "uti_login": rows[0][1], "uti_password": rows[0][2], "uti_token": rows[0][3], "uti_online": rows[0][4], "uti_token_expiration":rows[0][5]})
+                #    try:
+                #        with conn.cursor() as cursor:
+                #            cursor.execute(update_token, values_token)
+                #        conn.commit()
+                #        return jsonify({"uti_id": rows[0][0], "uti_login": rows[0][1], "uti_password": rows[0][2], "uti_token": rows[0][3], "uti_online": rows[0][4], "uti_token_expiration":rows[0][5]})
 
-                    except (Exception, psycopg2.DatabaseError) as error:
-                        print(error)
-                        return jsonify({"Code": NOT_FOUND_CODE, "Erro": "Erro no update"})
+                #    except (Exception, psycopg2.DatabaseError) as error:
+                #        print(error)
+                #        return jsonify({"Code": NOT_FOUND_CODE, "Erro": "Erro no update"})
         conn.close()
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
         return jsonify({"Code": NOT_FOUND_CODE, "Erro": "Utilizador não encontrado"})
+    return jsonify({"uti_id": rows[0][0], "uti_login": rows[0][1], "uti_password": rows[0][2], "uti_token": rows[0][3], "uti_online": rows[0][4], "uti_token_expiration":rows[0][5]})
 
 
 ##########################################################
