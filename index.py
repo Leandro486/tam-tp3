@@ -175,7 +175,7 @@ def getUti():
     rows = cur.fetchall()
 
     conn.close()
-    return jsonify({"uti_id": rows[0][0], "uti_login": rows[0][1], "uti_password": rows[0][2], "uti_token": rows[0][3]})
+    return jsonify({"uti_id": rows[0][0], "uti_login": rows[0][1], "uti_password": rows[0][2], "uti_token": rows[0][3], "uti_online": rows[0][4], "uti_token_expiration":rows[0][5]})
 
 if __name__ == "__main__":
     app.run(port=8080, debug=True, threaded=True)
