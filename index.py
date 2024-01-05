@@ -121,7 +121,7 @@ def verifyUti():
                     token = generate_token(user_id)
                     print(token)
                     expiration_time = datetime.utcnow() + timedelta(hours=1)
-                    values_token = [token, expiration_time, user_id,True]
+                    values_token = [token, expiration_time,True ,user_id]
 
                     try:
                         conn1 = db_connection()
