@@ -47,6 +47,10 @@ def db_connection():
     db = psycopg2.connect(dbname = database, user = user, password = password, host = host, port = 5432)
     return db
 
+def generate_token(user_id):
+    token = jwt.encode(user_id, app.config['SECRET_KEY'])
+    return token
+
 
 ##########################################################
 ## TOKEN INTERCEPTOR
@@ -60,10 +64,10 @@ def auth_user(func):
 
         try:
             token = content["uti_token"]
-            data = jwt.decode(token, app.config['SECRET_KEY'])    
+            data = jwt.decode(token, app.config['SECRET_KEY'])
 
             decoded_token = jwt.decode(content['token'], app.config['SECRET_KEY'])
-            if(decoded_token["expiration"] < str(datetime.utcnow())):
+            if(decoded_token["uti_token_expiration"] < str(datetime.utcnow())):
                 ####Attention: The error code should not be sent in JSON body!!! Check the Example bellow.
                 return jsonify({"Erro": "O Token expirou!", "Code": NOT_FOUND_CODE})
 
@@ -87,7 +91,7 @@ def verifyUti():
     get_user_info = """
                 SELECT *
                 FROM Utilizadores
-                WHERE uti_login = %s AND uti_password = crypt(%s, senha);
+                WHERE uti_login = %s AND uti_password = %s;
                 """
 
     values = [content["uti_login"], content["uti_password"]]
@@ -98,18 +102,29 @@ def verifyUti():
                 cursor.execute(get_user_info, values)
                 rows = cursor.fetchall()
 
-                #duvida!
-                token = jwt.encode({
-                    'id': rows[0][0],
-                    'administrador': rows[0][7],
-                    'expiration': str(datetime.utcnow() + timedelta(hours=1))
-                }, app.config['SECRET_KEY'])
+                update_token = """
+                UPDATE Utilizadores
+                SET uti_token = %s, uti_token_expiration = %s
+                WHERE uti_id = %s;
+                """
 
+                if rows:
+                    user_id = rows[0][0]
+                    token = generate_token(user_id)
+                    expiration_time = datetime.utcnow() + timedelta(hours=1)
+                    values_token = [token, expiration_time, user_id]
+
+                    try:
+                        with conn.cursor() as cursor:
+                            cursor.execute(update_token, values_token)
+                        conn.commit()
+                    except (Exception, psycopg2.DatabaseError) as error:
+                        print(error)
+                        return jsonify({"Code": NOT_FOUND_CODE, "Erro": "Utilizador não encontrado"})
         conn.close()
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
         return jsonify({"Code": NOT_FOUND_CODE, "Erro": "Utilizador não encontrado"})
-    return {"Code": OK_CODE, 'Token': token.decode('utf-8')}
 
 
 ##########################################################
@@ -121,7 +136,8 @@ def addUti():
 
     if "uti_login" not in content or "uti_password" not in content:
         return jsonify({"Code": BAD_REQUEST_CODE, "Erro": "Parâmetros inválidos"})
-
+    
+    #a password devia ser encryptada
     get_user_info = """
                 INSERT INTO Utilizadores(uti_login, uti_password, uti_token) 
                 VALUES(%s, %s, %s);
