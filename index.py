@@ -108,7 +108,7 @@ def verifyUti():
                 rows = cursor.fetchall()
 
                 token = generate_token(rows[0][0])
-                print(token)
+                #print(token)
 
                 if rows:
                     update_token = """
