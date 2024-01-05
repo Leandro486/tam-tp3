@@ -19,7 +19,7 @@ import os
 app = Flask(__name__)   
 
 ##This is not correct! - passwords need to be configured as environments variables
-app.config['SECRET_KEY'] = 'it\xb5u\xc3\xaf\xc1Q\xb9\n\x92W\tB\xe4\xfe__\x87\x8c}\xe9\x1e\xb8\x0f'
+#app.config['SECRET_KEY'] = 'it\xb5u\xc3\xaf\xc1Q\xb9\n\x92W\tB\xe4\xfe__\x87\x8c}\xe9\x1e\xb8\x0f'
 
 NOT_FOUND_CODE = 400
 OK_CODE = 200
@@ -142,17 +142,20 @@ def addUti():
 ##########################################################
 ## CONSULTAR UTILIZADOR
 ##########################################################
-@app.route("/getUti", methods=['POST'])
+@app.route("/getUti", methods=['GET'])
 @auth_user
 def getUti():
     content = request.get_json()
 
+    if "uti_id" not in content:
+        return jsonify({"Code:":BAD_REQUEST_CODE, "Erro":"Parãmetros inválidos"})
+    
     conn = db_connection()
     cur = conn.cursor()
 
-    decoded_token = jwt.decode(content['uti_token'], app.config['SECRET_KEY'])
+    #decoded_token = jwt.decode(content['uti_token'], app.config['SECRET_KEY'])
 
-    cur.execute("SELECT * FROM Utilizadores WHERE uti_id = %s;", (decoded_token["uti_id"],))
+    cur.execute("SELECT * FROM Utilizadores WHERE uti_id = %s;", (content["uti_id"]))
     rows = cur.fetchall()
 
     conn.close()
