@@ -107,6 +107,7 @@ def verifyUti():
                 SET uti_token = %s, uti_token_expiration = %s
                 WHERE uti_id = %s;
                 """
+                print(rows[0][0])
 
                 if rows:
                     user_id = rows[0][0]
