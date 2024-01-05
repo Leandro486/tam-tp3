@@ -103,7 +103,7 @@ def verifyUti():
                 cursor.execute(get_user_info, values)
                 rows = cursor.fetchall()
 
-                token = generate_token(rows[0][0])
+                #token = generate_token(rows[0][0])
 
                 #if rows:
                     #update_token = """
