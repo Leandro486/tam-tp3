@@ -48,7 +48,7 @@ def db_connection():
     return db
 
 def generate_token(user_id):
-    token = jwt.encode(user_id, os.environ.get['SECRET_KEY'])
+    token = jwt.encode(user_id, os.environ.get('SECRET_KEY'))
     print(token)
     return token
 
