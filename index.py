@@ -115,12 +115,13 @@ def verifyUti():
                     values_token = [token, expiration_time, user_id]
 
                     try:
-                        with db_connection() as conn1:
-                            with conn1.cursor() as cursor1:
-                                cursor1.execute(update_token, values_token)
-                            conn1.commit()
-                        conn1.close()
+                        conn1 = db_connection()
+                        cursor1 = conn1.cursor()
 
+                        cursor1.execute(update_token, values_token)
+                        conn1.commit()
+
+                        conn1.close()
                     except (Exception, psycopg2.DatabaseError) as error:
                         print(error)
                         return jsonify({"Code": NOT_FOUND_CODE, "Erro": "Erro no update"})
