@@ -124,7 +124,7 @@ def addUti():
 
     get_user_info = """
                 INSERT INTO Utilizadores(uti_login, uti_password, uti_token) 
-                VALUES(%s, crypt(%s, gen_salt('bf')), %s);
+                VALUES(%s, %s, %s);
                 """
 
     values = [content["uti_login"], content["uti_password"], ""]
