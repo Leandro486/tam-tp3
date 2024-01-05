@@ -143,7 +143,7 @@ def addUti():
 ## CONSULTAR UTILIZADOR
 ##########################################################
 @app.route("/getUti", methods=['GET'])
-@auth_user
+#@auth_user
 def getUti():
     content = request.get_json()
 
