@@ -123,11 +123,11 @@ def addUti():
         return jsonify({"Code": BAD_REQUEST_CODE, "Erro": "Parâmetros inválidos"})
 
     get_user_info = """
-                INSERT INTO Utilizadores(uti_id, uti_login, uti_password, uti_token) 
-                VALUES(%s, %s, crypt(%s, gen_salt('bf')), %s);
+                INSERT INTO Utilizadores(uti_login, uti_password, uti_token) 
+                VALUES(%s, crypt(%s, gen_salt('bf')), %s);
                 """
 
-    values = [content["uti_id"], content["uti_login"], content["uti_password"], ""]
+    values = [content["uti_login"], content["uti_password"], ""]
 
     try:
         with db_connection() as conn:
