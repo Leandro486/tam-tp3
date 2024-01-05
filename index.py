@@ -158,7 +158,7 @@ def logoutUti():
                     WHERE uti_id = %s;
                     """
     
-    values = [False,"",0,content["uti_id"]]
+    values = [False,"",None,content["uti_id"]]
 
     try:
         with db_connection() as conn:
