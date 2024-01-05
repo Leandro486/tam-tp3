@@ -154,13 +154,11 @@ def logoutUti():
     
     get_user_info = """
                     UPDATE Utilizadores
-                    SET uti_online = %s, uti_token = %s
+                    SET uti_online = %s
                     WHERE uti_id = %s;
                     """
     
-    values = [False,"",content["uti_id"]]
-
-    print(content["uti_id"])
+    values = [False,content["uti_id"]]
 
     try:
         with db_connection() as conn:
@@ -175,16 +173,6 @@ def logoutUti():
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
         return jsonify({"Code": NOT_FOUND_CODE, "Erro": "Não foi possivel fazer o logout"})
-            
-    
-
-
-
-
-
-
-
-
 
 
 ##########################################################
