@@ -49,6 +49,7 @@ def db_connection():
 
 def generate_token(user_id):
     token = jwt.encode(user_id, os.environ.get['SECRET_KEY'])
+    print(token)
     return token
 
 
@@ -102,16 +103,18 @@ def verifyUti():
                 cursor.execute(get_user_info, values)
                 rows = cursor.fetchall()
 
-                if rows:
-                    update_token = """
-                    UPDATE Utilizadores
-                    SET uti_token = %s, uti_token_expiration = %s
-                    WHERE uti_id = %s;
-                    """
+                token = generate_token(rows[0][0])
 
-                    user_id = rows[0][0]
-                    token = generate_token(user_id)
-                    print(token)
+                #if rows:
+                    #update_token = """
+                    #UPDATE Utilizadores
+                    #SET uti_token = %s, uti_token_expiration = %s
+                    #WHERE uti_id = %s;
+                    #"""
+
+                    #user_id = rows[0][0]
+                    #token = generate_token(user_id)
+                    #print(token)
                     #expiration_time = datetime.utcnow() + timedelta(hours=1)
                     #values_token = [token, expiration_time, user_id]
 
