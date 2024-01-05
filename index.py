@@ -154,11 +154,11 @@ def logoutUti():
     
     get_user_info = """
                     UPDATE Utilizadores
-                    SET uti_online = %s, uti_token = %s, uti_token_expiration = %s
+                    SET uti_online = %s, uti_token = %s
                     WHERE uti_id = %s;
                     """
     
-    values = [False,"",None,content["uti_id"]]
+    values = [False,"",content["uti_id"]]
 
     try:
         with db_connection() as conn:
