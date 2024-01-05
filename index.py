@@ -102,18 +102,19 @@ def verifyUti():
                 cursor.execute(get_user_info, values)
                 rows = cursor.fetchall()
 
-                update_token = """
-                UPDATE Utilizadores
-                SET uti_token = %s, uti_token_expiration = %s
-                WHERE uti_id = %s;
-                """
-
                 if rows:
+                    update_token = """
+                    UPDATE Utilizadores
+                    SET uti_token = %s, uti_token_expiration = %s
+                    WHERE uti_id = %s;
+                    """
+
                     user_id = rows[0][0]
                     token = generate_token(user_id)
                     expiration_time = datetime.utcnow() + timedelta(hours=1)
                     values_token = [token, expiration_time, user_id]
-
+                    print(values_token)
+                    
                     try:
                         conn1 = db_connection()
                         cursor1 = conn1.cursor()
