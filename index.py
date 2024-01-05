@@ -48,9 +48,13 @@ def db_connection():
     return db
 
 def generate_token(user_id):
-    token = jwt.encode(user_id, os.environ.get('SECRET_KEY'))
-    print(token)
-    return token
+    secret_key = os.environ.get('SECRET_KEY') 
+    
+    if secret_key:
+        token = jwt.encode({'user_id': user_id}, secret_key, algorithm='HS256')
+        return token
+    else:
+        raise ValueError("Chave secreta não encontrada")
 
 
 ##########################################################
