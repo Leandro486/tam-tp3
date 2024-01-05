@@ -110,6 +110,7 @@ def verifyUti():
 
                 if rows:
                     user_id = rows[0][0]
+                    print(user_id)
                     token = generate_token(user_id)
                     expiration_time = datetime.utcnow() + timedelta(hours=1)
                     values_token = [token, expiration_time, user_id]
