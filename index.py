@@ -165,8 +165,11 @@ def logoutUti():
             with conn.cursor() as cursor:
                 cursor.execute(get_user_info, values)
                 rows = cursor.fetchall()
-        conn.close()
-        return True
+                conn.close()
+                if rows:
+                    return True
+                else:
+                    return False
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
         return jsonify({"Code": NOT_FOUND_CODE, "Erro": "Não foi possivel fazer o logout"})
