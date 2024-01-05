@@ -154,26 +154,26 @@ def logoutUti():
     
     get_user_info = """
                     UPDATE Utilizadores
-                    SET uti_online = %s
+                    SET uti_online = %s, uti_token = %s, uti_token_expiration = %s
                     WHERE uti_id = %s;
                     """
     
-    values = [False,content["uti_id"]]
+    values = [False,"",None,content["uti_id"]]
 
     try:
         with db_connection() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(get_user_info, values)
-                rows = cursor.fetchall()
-                conn.close()
-                if rows:
-                    return True
+                rows = cursor.rowcount
+                if rows > 0:
+                    conn.commit()
+                    return jsonify({"Logout": "successful"})
                 else:
-                    return False
+                    return jsonify({"Code": "NOT_FOUND_CODE", "Erro": "Não foi possível fazer o logout, usuário não encontrado"})
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
         return jsonify({"Code": NOT_FOUND_CODE, "Erro": "Não foi possivel fazer o logout"})
-
+            
 
 ##########################################################
 ## REGISTO DE UTILIZADOR
