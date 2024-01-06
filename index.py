@@ -193,7 +193,7 @@ def addUti():
         return jsonify({"Code": NOT_FOUND_CODE, "Erro": str(error)})
     finally:
         conn.close()
-    return {"Code": OK_CODE}
+    return "Utilizador Registado"
 
 ##########################################################
 ## CONSULTAR UTILIZADOR
