@@ -63,7 +63,7 @@ def generate_token(user_id):
 def verifyUti():
     content = request.get_json()
 
-    #print(content)
+    print(content)
 
     if content[0]["uti_login"] not in content or  content[0]["uti_password"] not in content:
         return jsonify({"Code": BAD_REQUEST_CODE, "Erro": "Parâmetros inválidos"})
