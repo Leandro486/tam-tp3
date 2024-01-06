@@ -65,7 +65,7 @@ def verifyUti():
 
     print(content)
 
-    if "uti_login" not in content[1] or "uti_password" not in content[2]:
+    if "uti_login" not in content or "uti_password" not in content:
         return jsonify({"Code": BAD_REQUEST_CODE, "Erro": "Parâmetros inválidos"})
 
     get_user_info = """
