@@ -63,7 +63,7 @@ def generate_token(user_id):
 def verifyUti():
     content = request.get_json()
 
-    print(content)
+    #print(content)
 
     if "uti_login" not in content or "uti_password" not in content:
         return jsonify({"Code": BAD_REQUEST_CODE, "Erro": "Parâmetros inválidos"})
@@ -114,7 +114,7 @@ def verifyUti():
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
         return jsonify({"Code": NOT_FOUND_CODE, "Erro": "Utilizador não encontrado"})
-    return jsonify({"uti_id": rows[0][0], "uti_login": rows[0][1], "uti_password": rows[0][2], "uti_token": rows[0][3], "uti_online": rows[0][4], "uti_token_expiration":rows[0][5]})
+    #return jsonify({"uti_id": rows[0][0], "uti_login": rows[0][1], "uti_password": rows[0][2], "uti_token": rows[0][3], "uti_online": rows[0][4], "uti_token_expiration":rows[0][5]})
 
 
 ##########################################################
