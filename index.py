@@ -65,7 +65,7 @@ def verifyUti():
 
     print(content)
 
-    if "uti_login" not in content or "uti_password" not in content:
+    if "uti_login" not in content[1] or "uti_password" not in content[2]:
         return jsonify({"Code": BAD_REQUEST_CODE, "Erro": "Parâmetros inválidos"})
 
     get_user_info = """
@@ -94,7 +94,7 @@ def verifyUti():
 
                     user_id = rows[0][0]
                     token = generate_token(user_id)
-                    print(token)
+                    #print(token)
                     expiration_time = datetime.utcnow() + timedelta(hours=1)
                     values_token = [token, expiration_time,True ,user_id]
 
