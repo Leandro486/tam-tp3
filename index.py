@@ -56,39 +56,14 @@ def generate_token(user_id):
     else:
         raise ValueError("Chave secreta não encontrada")
 
-
-##########################################################
-## TOKEN INTERCEPTOR
-##########################################################
-def auth_user(func):
-    @wraps(func)
-    def decorated(*args, **kwargs):
-        content = request.get_json()
-        if content is None or "uti_token" not in content or not content["uti_token"]:
-            return jsonify({'Erro': 'Token está em falta!', 'Code': UNAUTHORIZED_CODE})
-
-        try:
-            token = content["uti_token"]
-            data = jwt.decode(token, app.config['SECRET_KEY'])
-
-            decoded_token = jwt.decode(content['token'], app.config['SECRET_KEY'])
-            if(decoded_token["uti_token_expiration"] < str(datetime.utcnow())):
-                ####Attention: The error code should not be sent in JSON body!!! Check the Example bellow.
-                return jsonify({"Erro": "O Token expirou!", "Code": NOT_FOUND_CODE})
-
-        except Exception as e:
-            ##correct way!!!
-            return jsonify({'Erro': 'Token inválido'}), FORBIDDEN_CODE
-        return func(*args, **kwargs)
-    return decorated
-
-
 ##########################################################
 ## LOGIN
 ##########################################################
 @app.route("/loginUti", methods=['POST'])
 def verifyUti():
     content = request.get_json()
+
+    print(content)
 
     if "uti_login" not in content or "uti_password" not in content:
         return jsonify({"Code": BAD_REQUEST_CODE, "Erro": "Parâmetros inválidos"})
