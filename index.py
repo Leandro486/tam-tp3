@@ -71,7 +71,9 @@ def loginUti():
     get_user_info = """
                 SELECT *
                 FROM Utilizadores
-                WHERE uti_login = %s AND uti_password = %s;
+                WHERE uti_login = %s AND uti_password = %s
+                AND (uti_token IS NULL OR uti_token_expiration IS NULL)
+                AND uti_online = False;
                 """
 
     values = [content["uti_login"], content["uti_password"]]
