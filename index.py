@@ -164,16 +164,29 @@ def addUti():
     
     #a password devia ser encryptada
     get_user_info = """
-                INSERT INTO Utilizadores(uti_login, uti_password, uti_token) 
-                VALUES(%s, %s, %s);
-                """
-
-    values = [content["uti_login"], content["uti_password"], ""]
+                    SELECT COUNT(*)
+                    FROM Utilizadores
+                    WHERE uti_login = %s;
+                    """
 
     try:
         with db_connection() as conn:
             with conn.cursor() as cursor:
-                cursor.execute(get_user_info, values)
+                cursor.execute(get_user_info, [content["uti_login"]])
+                user_count = cursor.fetchone()[0]
+
+            if user_count > 0:
+                return jsonify({"Code": BAD_REQUEST_CODE, "Erro": "Login já existe"})
+            
+            insert_user_info = """
+                                INSERT INTO Utilizadores(uti_login, uti_password, uti_token) 
+                                VALUES(%s, %s, %s);
+                                """
+
+            insert_values = [content["uti_login"], content["uti_password"], ""]
+
+            cursor.execute(insert_user_info, insert_values)
+            conn.commit()
     except (Exception, psycopg2.DatabaseError) as error:
         return jsonify({"Code": NOT_FOUND_CODE, "Erro": str(error)})
     finally:
