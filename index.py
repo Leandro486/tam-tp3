@@ -171,7 +171,7 @@ def addUti():
         with db_connection() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(get_user_info, [content["uti_login"]])
-                user_count = cursor.fetchall()
+                user_count = cursor.fetchone()
 
             if user_count > 0:
                 return jsonify({"Code": BAD_REQUEST_CODE, "Erro": "Login já existe"})
