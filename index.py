@@ -175,7 +175,7 @@ def addUti():
 
             if user_count > 0:
                 return jsonify({"Code": BAD_REQUEST_CODE, "Erro": "Login já existe"})
-            
+
             #a password devia ser encryptada
             insert_user_info = """
                                 INSERT INTO Utilizadores(uti_login, uti_password, uti_token) 
@@ -184,7 +184,10 @@ def addUti():
 
             insert_values = [content["uti_login"], content["uti_password"], ""]
 
-            cursor.execute(insert_user_info, insert_values)
+            with db_connection() as conn1:
+                with conn1.cursor() as cursor1:
+                    cursor1.execute(insert_user_info, insert_values)
+                conn1.commit()
             conn.commit()
     except (Exception, psycopg2.DatabaseError) as error:
         return jsonify({"Code": NOT_FOUND_CODE, "Erro": str(error)})
