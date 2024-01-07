@@ -184,10 +184,15 @@ def addUti():
 
             insert_values = [content["uti_login"], content["uti_password"], ""]
 
-            with db_connection() as conn1:
-                with conn1.cursor() as cursor1:
-                    cursor1.execute(insert_user_info, insert_values)
-                conn1.commit()
+            try:
+                with db_connection() as conn1:
+                    with conn1.cursor() as cursor1:
+                        cursor1.execute(insert_user_info, insert_values)
+                    conn1.commit()
+
+            except (Exception, psycopg2.DatabaseError) as error:
+                return jsonify({"Code": NOT_FOUND_CODE, "Erro": str(error)})
+
             conn.commit()
     except (Exception, psycopg2.DatabaseError) as error:
         return jsonify({"Code": NOT_FOUND_CODE, "Erro": str(error)})
