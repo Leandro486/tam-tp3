@@ -226,7 +226,25 @@ def getUti():
 def addMed():
     content = request.get_json()
 
-    return
+    if "med_nome" not in content or "med_dosagem" not in content or "med_forma" not in content or "med_posologia" not in content or "med_horario1" not in content or "med_horario2" not in content or "med_horario3" not in content or "med_horario4" not in content or "med_quantidade" not in content or "med_data" not in content or "med_administrado" not in content or "uti_id" not in content:
+        return jsonify({"Code:":BAD_REQUEST_CODE, "Erro":"Parãmetros inválidos"})
+    
+    insert_med_info = """
+                  INSERT INTO Medicamentos(med_nome, med_dosagem, med_forma, med_posologia, med_horario1, med_horario2, med_horario3, med_horario4, med_quantidade, med_duracao, med_data, med_administrado, uti_id)
+                  VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
+                """
+    insert_values = [content['med_nome'],content['med_dosagem'],content['med_forma'],content['med_posologia'],content['med_horario1'],content['med_horario2'],content['med_horario3'],content['med_horario4'],content['med_quantidade'],content['med_duracao'],content['med_data'],content['med_administrado'],content['uti_id']]
+
+    try:
+        with db_connection() as conn:
+            with conn.cursor as cursor:
+                cursor.execute(insert_med_info,insert_values)
+            conn.commit()
+    except (Exception, psycopg2.DatabaseError) as error:
+        return jsonify({"Code": NOT_FOUND_CODE, "Erro": str(error)})
+    finally:
+        conn.close()
+    return "Medicamento Registado"
 
 ##########################################################
 ## LISTAR MEDICAMENTOS
