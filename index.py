@@ -204,7 +204,6 @@ def addUti():
 ## CONSULTAR UTILIZADOR
 ##########################################################
 @app.route("/getUti", methods=['GET'])
-#@auth_user
 def getUti():
     content = request.get_json()
 
@@ -219,6 +218,56 @@ def getUti():
 
     conn.close()
     return jsonify({"uti_id": rows[0][0], "uti_login": rows[0][1], "uti_password": rows[0][2], "uti_token": rows[0][3], "uti_online": rows[0][4], "uti_token_expiration":rows[0][5]})
+
+##########################################################
+## ADICIONAR MEDICAMENTOS
+##########################################################
+@app.route("/addMed",methods=["POST"])
+def addMed():
+    content = request.get_json()
+
+    return
+
+##########################################################
+## LISTAR MEDICAMENTOS
+##########################################################
+@app.route("/getAllMed",methods=["GET"])
+def getAllMed():
+    content = request.get_json()
+
+    return
+
+##########################################################
+## GET MEDICAMENTO
+##########################################################
+@app.route("/getMed",methods=["GET"])
+def getMed():
+    content = request.get_json()
+
+    return
+
+##########################################################
+## UPDATE MEDICAMENTO
+##########################################################
+@app.route("/updateMed",methods=["PUT"])
+def updateMed():
+    content = request.get_json()
+
+    return
+
+##########################################################
+## DELETE MEDICAMENTO
+##########################################################
+@app.route("/deleteMed",methods=["DELETE"])
+def deleteMed():
+    content = request.get_json()
+
+    return
+
+
+
+
+
 
 
 if __name__ == "__main__":
