@@ -237,7 +237,7 @@ def addMed():
 
     try:
         with db_connection() as conn:
-            with conn.cursor as cursor:
+            with conn.cursor() as cursor:
                 cursor.execute(insert_med_info,insert_values)
             conn.commit()
     except (Exception, psycopg2.DatabaseError) as error:
