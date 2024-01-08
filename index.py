@@ -15,6 +15,7 @@ import logging, time, psycopg2, jwt, json
 from datetime import datetime, timedelta
 from functools import wraps
 import os
+import bcrypt
 
 app = Flask(__name__)   
 
@@ -181,8 +182,10 @@ def addUti():
                                 INSERT INTO Utilizadores(uti_login, uti_password, uti_token) 
                                 VALUES(%s, %s, %s);
                                 """
+            
+            hashed_password = bcrypt.hashpw(content["uti_password"].encode(), bcrypt.gensalt())
 
-            insert_values = [content["uti_login"], content["uti_password"], ""]
+            insert_values = [content["uti_login"], hashed_password.decode(), ""]
 
             try:
                 with db_connection() as conn1:
