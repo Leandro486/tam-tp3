@@ -124,9 +124,10 @@ def loginUti():
 ##########################################################
 @app.route("/logoutUti",methods=['POST'])
 def logoutUti():    
-    content = request.get_json()
+    uti_id = request.args.get('uti_id')
 
-    print(content)
+    if uti_id is None:
+        return jsonify({"Code:": BAD_REQUEST_CODE, "Erro": "Parâmetros inválidos"})
     
     get_user_info = """
                     UPDATE Utilizadores
@@ -134,7 +135,7 @@ def logoutUti():
                     WHERE uti_id = %s;
                     """
     
-    values = [False,"",None,content]
+    values = [False,"",None,uti_id]
 
     try:
         with db_connection() as conn:
