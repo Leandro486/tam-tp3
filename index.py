@@ -126,6 +126,8 @@ def loginUti():
 def logoutUti():
     content = request.get_json()
 
+    print(content)
+
     if "uti_id" not in content:
         return jsonify({"Code:":BAD_REQUEST_CODE, "Erro":"Parãmetros inválidos"})
     
