@@ -124,12 +124,18 @@ def loginUti():
 ##########################################################
 @app.route("/logoutUti",methods=['POST'])
 def logoutUti():
+    uti_id = request.form.get('uti_id')
+
+    if uti_id is None:
+        return jsonify({"Code:": BAD_REQUEST_CODE, "Erro": "Parâmetros inválidos"})
+    
+    
     content = request.get_json()
 
     print(content)
 
-    if "uti_id" not in content:
-        return jsonify({"Code:":BAD_REQUEST_CODE, "Erro":"Parãmetros inválidos"})
+    #if "uti_id" not in content:
+    #    return jsonify({"Code:":BAD_REQUEST_CODE, "Erro":"Parãmetros inválidos"})
     
     get_user_info = """
                     UPDATE Utilizadores
