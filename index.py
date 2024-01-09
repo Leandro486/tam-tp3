@@ -127,9 +127,6 @@ def logoutUti():
     content = request.get_json()
 
     print(content)
-
-    if "uti_id" not in content:
-        return jsonify({"Code:":BAD_REQUEST_CODE, "Erro":"Parãmetros inválidos"})
     
     get_user_info = """
                     UPDATE Utilizadores
@@ -137,7 +134,7 @@ def logoutUti():
                     WHERE uti_id = %s;
                     """
     
-    values = [False,"",None,content["uti_id"]]
+    values = [False,"",None,content]
 
     try:
         with db_connection() as conn:
