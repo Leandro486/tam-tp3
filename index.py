@@ -205,19 +205,30 @@ def addUti():
 ##########################################################
 @app.route("/getUti", methods=['GET'])
 def getUti():
-    content = request.get_json()
+    uti_id = request.args.get('uti_id')
 
-    if "uti_id" not in content:
-        return jsonify({"Code:":BAD_REQUEST_CODE, "Erro":"Parãmetros inválidos"})
+    if uti_id is None:
+        return jsonify({"Code:": BAD_REQUEST_CODE, "Erro": "Parâmetros inválidos"})
     
     conn = db_connection()
     cur = conn.cursor()
 
-    cur.execute("SELECT * FROM Utilizadores WHERE uti_id = %s;", (content["uti_id"]))
+    cur.execute("SELECT * FROM Utilizadores WHERE uti_id = %s;", (uti_id,))
     rows = cur.fetchall()
 
     conn.close()
-    return jsonify({"uti_id": rows[0][0], "uti_login": rows[0][1], "uti_password": rows[0][2], "uti_token": rows[0][3], "uti_online": rows[0][4], "uti_token_expiration":rows[0][5]})
+
+    if len(rows) == 0:
+        return jsonify({"Erro": "Utilizador não encontrado"})
+
+    return jsonify({
+        "uti_id": rows[0][0],
+        "uti_login": rows[0][1],
+        "uti_password": rows[0][2],
+        "uti_token": rows[0][3],
+        "uti_online": rows[0][4],
+        "uti_token_expiration": rows[0][5]
+    })
 
 ##########################################################
 ## ADICIONAR MEDICAMENTOS
